@@ -30,7 +30,7 @@ double find_derivative_of_polynomial_function(double x, double n);
 int main(){ 
     double n;
     int state;
-    printf("Which sort of operation you would like to proceed?:\n1. Find the Derivative of Polynomial Function\n2. Find the Definite Integral\n3. Find the Cos(x) or Sin(x)\n");
+    printf("Which sort of operation you would like to proceed?:\n1. Find the Derivative of Polynomial Function\n2. Find the Definite Integral of Polynomial Function\n3. Find the Cos(x) or Sin(x)\n");
     scanf("%d", &state);
     switch (state){
     case 1:
@@ -96,6 +96,15 @@ uintmax_t factorial(uintmax_t n){
     }
 }
 
+//alternative version of factorial what provides better performance with X>2PI (but still only till 3PI)
+long double one_n_factorial(int n){
+    long double fact = 1.0;
+    for (int i=1;i<=n;i++){
+        fact /= i;
+    }
+    return fact;
+}
+
 //taylor series is SUM(f(n)(x0)(x-xo)/n!)
 //This implementation work awesome for |x|<=2PI
 //Values greater than 2PI require strings-based-arithmetic of usage of CPU's inner blocks
@@ -113,7 +122,7 @@ double sine(double x){
     }
     //To deprive ourselfs from lack of understanding i got to note that i'll consider Maclaurin series as Taylor's one (!)
     for (int j = 0; j<=TAYLOR_SERIES; j++){
-        sin__ += power(-1, j)*(power(x,2*j+1)/factorial(2*j+1));
+        sin__ += power(-1, j)*(power(x,2*j+1)*one_n_factorial(2*j+1));
         i += 1;
     }
     return sin__;
@@ -130,7 +139,7 @@ double cosine(double x){
     }
     //To deprive ourselfs from lack of understanding i got to note that i'll consider Maclaurin series as Taylor's one (!)
     for (int j = 0; j<=TAYLOR_SERIES; j++){
-        cos__ += power(-1, j)*(power(x,2*j)/factorial(2*j));
+        cos__ += power(-1, j)*(power(x,2*j)*one_n_factorial(2*j));
         i += 1;
     }
     return cos__;
