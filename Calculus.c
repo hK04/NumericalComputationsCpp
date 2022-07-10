@@ -69,7 +69,7 @@ int main(){
                 scanf("%lf", &x);
                 printf("Sin(x) approximately equals: %.3lf", sine(x));
                 break;
-            
+    
         }
     }
 }
@@ -105,10 +105,10 @@ long double one_n_factorial(int n){
     return fact;
 }
 
-//taylor series is SUM(f(n)(x0)(x-xo)/n!)
+//Taylor series is SUM(f(n)(x0)(x-xo)/n!)
 //This implementation work awesome for |x|<=2PI
 //Values greater than 2PI require strings-based-arithmetic of usage of CPU's inner blocks
-//Or just knowledge, what sin(2pi+x)=sin(x)
+//Or just knowledge, what sin(2pi+x)=sin(x) ;)
 
 double sine(double x){
     //in following code we treat x as it was given in radianes
