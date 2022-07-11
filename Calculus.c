@@ -17,59 +17,116 @@ double power(double x, double n);
 uintmax_t factorial(uintmax_t n);
 
 //define the sine and cosine
-double sine(double x);
-double cosine(double x);
+double sine(double x, double n);
+double cosine(double x, double n);
+
+//define natural logarithm
+double logarithm(double x, double n);
 
 //define numerical integral
-double find_integral_of_polynomial_function(double n, double min__, double max__);
+double find_definite_integral(double n, double min__, double max__, double (*function)(double, double));
 
 //define numerical derrivative 
-double find_derivative_of_polynomial_function(double x, double n);
+double find_derivative(double x, double n, double(*function)(double, double));
 
 //main function
 int main(){ 
-    double n;
-    int state;
-    printf("Which sort of operation you would like to proceed?:\n1. Find the Derivative of Polynomial Function\n2. Find the Definite Integral of Polynomial Function\n3. Find the Cos(x) or Sin(x)\n");
+    double n = 0;;
+    int state, state_2;
+    printf("Which sort of operation you would like to proceed?:\n1. Find the Derivative of Function\n2. Find the Definite Integral of Function\n3. Find the Cos(x), Sin(x), Ln(x) or x^n\n");
     scanf("%d", &state);
     switch (state){
     case 1:
         double x;
+        printf("For which sort of Function you would like to find Definite Integral?: \n1.Find for the x^n\n2.Find for the Cos(x)\n3.Find for the Sin(x)\n4.Find for the Ln(x)");
+        scanf("%d", &state_2);
+
+        switch (state_2){
+            case 1:
+                printf("Determine power of polynomial dependence:  ");
+                scanf("%lf", &n);
+                break;
+        }
         printf("Determine value of x_0: ");
         scanf("%lf", &x);
-        printf("Determine power of polynomial dependence: \n");
-        scanf("%lf", &n);
-        printf("%lf", find_derivative_of_polynomial_function(x, n));
+
+        switch (state_2){
+            case 1:
+                printf("%lf", find_derivative(x, n, power));
+                break; 
+
+            case 2:
+                printf("%lf", find_derivative(x, n, cosine));
+                break;
+
+            case 3:
+                printf("%lf", find_derivative(x, n, sine));
+                break;
+
+            case 4:
+                printf("%lf", find_derivative(x, n, logarithm));
+                break;
+        }
         break;
+
     case 2:
         double min__;
         double max__;
-        printf("Determine power of polynomial dependence: ");
-        scanf("%lf", &n);
+        printf("For which sort of Function you would like to find Definite Integral?: \n1.Find for the x^n\n2.Find for the Cos(x)\n3.Find for the Sin(x)\n4.Find for the Ln(x)");
+        scanf("%d", &state_2);
+        switch (state_2){
+            case 1:
+                printf("Determine power of polynomial dependence:  ");
+                scanf("%lf", &n);
+                break;
+        }
+
         printf("\nDetermine mimum:  ");
         scanf("%lf", &min__);
-        printf("\nDetermine maximum:  ");
+        printf("Determine maximum:  ");
         scanf("%lf", &max__);
-        printf("%lf", find_integral_of_polynomial_function(n, min__, max__));
+
+        switch (state_2){
+            case 1:
+                printf("%lf", find_definite_integral(n, min__, max__, power));
+                break; 
+
+            case 2:
+                printf("%lf", find_definite_integral(n, min__, max__, cosine));
+                break;
+
+            case 3:
+                printf("%lf", find_definite_integral(n, min__, max__, sine));
+                break;
+
+            case 4:
+                printf("%lf", find_definite_integral(n, min__, max__, logarithm));
+                break;
+        }
         break;
+
     case 3:
-        int state_2;
-        printf("\n1.Find the Cos(x)\n 2.Find the Sin(x)\n");
+        printf("\n1.Find the Cos(x)\n2.Find the Sin(x)\n3.Find the Ln(x)");
         scanf("%d", &state_2);
         switch (state_2){
             case 1:
                 double x;
                 printf("Determine value of x_0: ");
                 scanf("%lf", &x);
-                printf("Cos(x) approximately equals: %.3lf", cosine(x));
+                printf("Cos(x) approximately equals: %.3lf", cosine(x, n));
                 break;
 
             case 2:
                 printf("Determine value of x_0: ");
                 scanf("%lf", &x);
-                printf("Sin(x) approximately equals: %.3lf", sine(x));
+                printf("Sin(x) approximately equals: %.3lf", sine(x, n));
                 break;
-    
+
+            case 3:
+                printf("Determine value of x_0: ");
+                scanf("%lf", &x);
+                printf("Ln(x) approximately equals: %.3lf", logarithm(x, n));
+                break;
         }
     }
 }
@@ -110,7 +167,8 @@ long double one_n_factorial(int n){
 //Values greater than 2PI require strings-based-arithmetic of usage of CPU's inner blocks
 //Or just knowledge, what sin(2pi+x)=sin(x) ;)
 
-double sine(double x){
+
+double sine(double x, double n){
     //in following code we treat x as it was given in radianes
     double sin__ = 0;
     int i = 1;
@@ -128,7 +186,7 @@ double sine(double x){
     return sin__;
 }
 
-double cosine(double x){
+double cosine(double x, double n){
     double cos__ = 0;
     int i = 1;
     while (x>=2*PI){
@@ -145,19 +203,31 @@ double cosine(double x){
     return cos__;
 }
 
+double logarithm(double x, double n){
+    double log__ = 0;
+    if (x == 1.0){
+        return log__;
+    }
+    for (int j = 1; j<=2*TAYLOR_SERIES; j++){
+        log__ += power(-1, j+1)*power(x-1,j)/j;
+    }
+    return log__;
+
+}
+
 //integral f(x)dx = SUM(f(x)delta(x), delta(x)--> 0) from min to max
-double find_integral_of_polynomial_function(double n, double min__, double max__){
+double find_definite_integral(double n, double min__, double max__, double (*function)(double, double)){
     double inte_g = 0;
     double value = min__;
     while (value<=max__){
-        inte_g += (power(value,n)*DELTA_OF_DIFFERENTIATION );
+        inte_g += (function(value,n)*DELTA_OF_DIFFERENTIATION );
         value += DELTA_OF_DIFFERENTIATION ;
     }
     return inte_g;
 }
 
 //derivative of f(x) is lim(delta(x) -->o) (f(x+delta(x))-f(x))/delta(x)
-double find_derivative_of_polynomial_function(double x, double n){
-    double der_v = (power(x + DELTA_OF_DIFFERENTIATION , n) - power(x,n)) / DELTA_OF_DIFFERENTIATION ;
+double find_derivative(double x, double n, double(*function)(double, double)){
+    double der_v = (function(x + DELTA_OF_DIFFERENTIATION , n) - function(x,n)) / DELTA_OF_DIFFERENTIATION ;
     return der_v;
 }
